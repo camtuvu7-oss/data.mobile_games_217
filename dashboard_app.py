@@ -294,21 +294,30 @@ with tab3:
     # ROW 3: Biểu đồ
     c3, c4 = st.columns(2)
     
-    # Chart 3.3: Heatmap (Revenue by Date and Platform) - Biến tấu do thiếu session data sạch
+    # Chart 3.3: Heatmap (Revenue by Date and Platform)
     with c3:
         st.subheader("Hoạt động Nạp tiền (Date x Platform)")
         df_heat = fdf_user.groupby(['event_date', 'platform'])['rev_iap'].sum().reset_index()
-        df_heat_pivot = df_heat.pivot(index='platform', columns='event_date', values='rev_iap').fillna(0)
-        fig11 = px.imshow(df_heat_pivot, color_continuous_scale='YlGnBu', aspect="auto")
-        fig11.update_layout(height=350, margin=dict(t=10, b=30))
-        st.plotly_chart(fig11, use_container_width=True)
+        if df_heat['rev_iap'].sum() > 0:
+            df_heat_pivot = df_heat.pivot(index='platform', columns='event_date', values='rev_iap').fillna(0)
+            fig11 = px.imshow(df_heat_pivot, color_continuous_scale='YlGnBu', aspect="auto")
+            fig11.update_layout(height=350, margin=dict(t=10, b=30))
+            st.plotly_chart(fig11, use_container_width=True)
+        else:
+            st.info("Không phát sinh giao dịch nạp tiền nào trong khoảng thời gian này.")
         
     # Chart 3.4: Boxplot (Revenue Distribution by Country)
     with c4:
         st.subheader("Phân phối Chi tiêu (Country)")
-        # Lọc các user có nạp và thuộc top 5 country để vẽ
-        top5_countries = df_user.groupby('country')['rev_iap'].sum().nlargest(5).index
-        df_box = iap_users[iap_users['country'].isin(top5_countries)]
-        fig12 = px.box(df_box, x="country", y="rev_iap", color="country", color_discrete_sequence=COLORS)
-        fig12.update_layout(height=350, margin=dict(t=10, b=30))
-        st.plotly_chart(fig12, use_container_width=True)
+        if not iap_users.empty:
+            # Lấy top 5 quốc gia từ tập dữ liệu ĐÃ LỌC (fdf_user) thay vì tập gốc (df_user)
+            top5_countries = fdf_user.groupby('country')['rev_iap'].sum().nlargest(5).index
+            df_box = iap_users[iap_users['country'].isin(top5_countries)]
+            if not df_box.empty:
+                fig12 = px.box(df_box, x="country", y="rev_iap", color="country", color_discrete_sequence=COLORS)
+                fig12.update_layout(height=350, margin=dict(t=10, b=30))
+                st.plotly_chart(fig12, use_container_width=True)
+            else:
+                st.info("Không có dữ liệu chi tiêu cho Quốc gia đã chọn.")
+        else:
+            st.info("Không có người chơi nào nạp tiền (IAP) theo bộ lọc hiện tại.")
