@@ -35,9 +35,13 @@ def load_data():
     if not os.path.exists(base_dir):
         base_dir = current_dir
 
-    df_user = pd.read_csv(os.path.join(base_dir, "full_user_master.csv"))
-    df_finance = pd.read_csv(os.path.join(base_dir, "full_daily_finance.csv"))
-    df_level = pd.read_csv(os.path.join(base_dir, "full_level_end_clean.csv"))
+    df_user = pd.read_parquet(os.path.join(base_dir, "full_user_master.parquet"))
+    df_finance = pd.read_parquet(os.path.join(base_dir, "full_daily_finance.parquet"))
+    
+    # Ghép 2 file nhỏ để lách luật giới hạn 25MB của GitHub Web
+    df_lvl1 = pd.read_parquet(os.path.join(base_dir, "full_level_end_clean_1.parquet"))
+    df_lvl2 = pd.read_parquet(os.path.join(base_dir, "full_level_end_clean_2.parquet"))
+    df_level = pd.concat([df_lvl1, df_lvl2], ignore_index=True)
     
     # Pre-process dates
     df_user['event_date'] = pd.to_datetime(df_user['event_date'])
