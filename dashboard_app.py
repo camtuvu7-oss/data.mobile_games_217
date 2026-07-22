@@ -65,7 +65,7 @@ selected_platforms = st.sidebar.multiselect("Platform", platforms, default=platf
 
 # Lọc Quốc gia
 countries = df_user['country'].dropna().unique().tolist()
-selected_countries = st.sidebar.multiselect("Country (Top 20)", countries[:20], default=countries[:5])
+selected_countries = st.sidebar.multiselect("Country (Top 20)", countries, default=countries)
 
 # Áp dụng bộ lọc
 if len(date_range) == 2:
