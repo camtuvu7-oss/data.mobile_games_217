@@ -76,11 +76,13 @@ if len(date_range) == 2:
 else:
     fdf_user, fdf_finance, fdf_level = df_user, df_finance, df_level
 
-if selected_platforms:
+if selected_platforms and set(selected_platforms) != set(platforms):
+    # Chỉ lọc khi người dùng bỏ chọn một số platform; giữ lại NaN nếu chọn tất cả
     fdf_user = fdf_user[fdf_user['platform'].isin(selected_platforms)]
     fdf_level = fdf_level[fdf_level['platform'].isin(selected_platforms)]
     
-if selected_countries:
+if selected_countries and set(selected_countries) != set(countries):
+    # Chỉ lọc khi người dùng bỏ chọn một số quốc gia; giữ lại NaN nếu chọn tất cả
     fdf_user = fdf_user[fdf_user['country'].isin(selected_countries)]
     fdf_level = fdf_level[fdf_level['country'].isin(selected_countries)]
 
