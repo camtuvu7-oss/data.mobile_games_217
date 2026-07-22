@@ -247,12 +247,13 @@ with tab3:
     whales = fdf_user.groupby('user_pseudo_id')['rev_iap'].sum()
     whale_count = len(whales[whales > 5]) # Nạp trên $5 được coi là whale (tuỳ chỉnh)
     
-    # ROW 1: 4 KPI CARDS
-    col1, col2, col3, col4 = st.columns(4)
+    # ROW 1: 5 KPI CARDS
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("Total Active Users", f"{total_active:,}")
     col2.metric("ARPPU (IAP Only)", f"${arppu:,.2f}")
     col3.metric("IAP Conversion Rate", f"{iap_conversion:.2f}%")
-    col4.metric("Whales Count (>$5)", f"{whale_count:,}")
+    col4.metric("IAP Users (Any Purchase)", f"{total_iap_users:,}", help="Số người đã từng nạp tiền bất kỳ (rev_iap > 0)")
+    col5.metric("Whales (>$5)", f"{whale_count:,}", help="Người nạp tổng cộng trên $5")
     
     st.markdown("<br>", unsafe_allow_html=True)
     
