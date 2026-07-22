@@ -63,9 +63,9 @@ date_range = st.sidebar.date_input("Date Range", [min_date, max_date])
 platforms = df_user['platform'].dropna().unique().tolist()
 selected_platforms = st.sidebar.multiselect("Platform", platforms, default=platforms)
 
-# Lọc Quốc gia
+# Lọc Quốc gia - mặc định chọn TẤT CẢ để khớp với số liệu báo cáo
 countries = df_user['country'].dropna().unique().tolist()
-selected_countries = st.sidebar.multiselect("Country (Top 20)", countries, default=countries)
+selected_countries = st.sidebar.multiselect("Country", countries, default=countries)
 
 # Áp dụng bộ lọc
 if len(date_range) == 2:
@@ -76,13 +76,13 @@ if len(date_range) == 2:
 else:
     fdf_user, fdf_finance, fdf_level = df_user, df_finance, df_level
 
+# Chỉ lọc khi người dùng bỏ chọn một số platform; giữ lại NaN nếu chọn tất cả
 if selected_platforms and set(selected_platforms) != set(platforms):
-    # Chỉ lọc khi người dùng bỏ chọn một số platform; giữ lại NaN nếu chọn tất cả
     fdf_user = fdf_user[fdf_user['platform'].isin(selected_platforms)]
     fdf_level = fdf_level[fdf_level['platform'].isin(selected_platforms)]
-    
+
+# Chỉ lọc khi người dùng bỏ chọn một số quốc gia; giữ lại NaN nếu chọn tất cả
 if selected_countries and set(selected_countries) != set(countries):
-    # Chỉ lọc khi người dùng bỏ chọn một số quốc gia; giữ lại NaN nếu chọn tất cả
     fdf_user = fdf_user[fdf_user['country'].isin(selected_countries)]
     fdf_level = fdf_level[fdf_level['country'].isin(selected_countries)]
 
@@ -247,7 +247,7 @@ with tab3:
     arppu = iap_users['rev_iap'].sum() / total_iap_users if total_iap_users > 0 else 0
     iap_conversion = (total_iap_users / total_active) * 100 if total_active > 0 else 0
     whales = fdf_user.groupby('user_pseudo_id')['rev_iap'].sum()
-    whale_count = len(whales[whales > 5]) # Nạp trên $5 được coi là whale (tuỳ chỉnh)
+    whale_count = len(whales[whales > 5]) # Nạp trên $5 được coi là whale
     
     # ROW 1: 5 KPI CARDS
     col1, col2, col3, col4, col5 = st.columns(5)
